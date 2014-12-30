@@ -3,7 +3,6 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Changing The Text</title>
-<!--    <script src="file:///Users/JacobWunder/Documents/TextAdventureJS/main.js"></script>-->
     <script src="http://requirejs.org/docs/release/2.1.15/minified/require.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -42,33 +41,8 @@
         var LEFTKEY = 123;
         var DOWNKEY = 125;
         
-        function WorldTools (){
-        }
-
-        function Character(name, pos, head, body) {
-            info = {
-                "name": name,
-                "pos": pos,
-                "head": head,
-                "body": body,
-                "title": "the peasant"
-            }
-            function moveLeft() {
-                this.pos[0] -= 1   
-            }
-            function moveRight() {
-                this.pos[0] += 1   
-            }
-            function moveUp() {
-                this.pos[1] -= 1   
-            }
-            function moveDown() {
-                this.pos[1] += 1   
-            }
-        }
-        
-        function TextAdventure () {
-            function makeWorld () {
+        function WorldTools() {
+            this.makeWorld = function() {
                 var world = [];
                 var row = [];
                 var borderRow = [];
@@ -94,76 +68,128 @@
                     world[size - 1][size - 1] = darkShading;
                 }
                 return world;
-            }
+            };
             
-            function makeTerrain (world) {
+            this.makeTerrain = function(world) {
                 var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
                 for (var i = 0; i < _.random(size / 10, size / 2); i++) {
                     var stonesCoord = [_.random(3, size - 3), _.random(3, size - 3)];
                     world[stonesCoord[1]][stonesCoord[0]] = stones;
                     for (var j = 0; j < _.random(3,9); j++) {
-                        world[stonesCoord[1] + _sample(numbers)][stonesCoord[0] + _.sample(numbers)] = stones;
+                        world[stonesCoord[1] + _.sample(numbers)][stonesCoord[0] + _.sample(numbers)] = stones;
                     }
                 }
                 return world;
-            }
+            };
             
-            function makeHTML (world, div) {
-                console.log(world);
+            this.makeHTML = function(world, div) {
                 var finalString = "";
-                var para, node, row;
+                var para, node, row, h2;
+                h2 = document.createElement("h2");
+                div.appendChild(para);
                 for (var i = 0; i < world.length; i++) {
-                    var row = world[i].toString();
-                    for (var j = 0; j < world[i].length; j++) {
-                        row = row.replace(",", "");
-                    }
-                    para = document.createElement("h2");
+                    row = world[i].toString();
+                    row = row.replace(",", "");
+                    para = document.createElement("br");
                     node = document.createTextNode(row);
                     para.appendChild(node);
-                    div.appendChild(para);
+                    h2.appendChild(para);
                 }
-            }
+            };
             
-            function placeCharacter(world, char) {
+            this.placeChar = function(world, char) {
                 var newWorld = [];
                 newWorld = _.extend(newWorld, world);
                 newWorld[char.pos[1]][char.pos[0]] = char.head;
                 newWorld[char.pos[1]-1][char.pos[0]-1] = char.body;
                 return newWorld;
-            }
+            };
+        }
+        
+        function CharacterTools() {
+            var createCharacter;
             
+            this.createCharacter = function(_name, _pos, _head, _body) {
+                var newCharacter = {
+                    "name": _name,
+                    "pos": _pos,
+                    "head": _head,
+                    "body": _body,
+                    "desc": "the peasant"
+                };
+                return newCharacter;
+            };
+            
+            this.moveLeft = function(char) {
+                char["pos"][0] -= 1;
+            };
+            
+            this.moveRight = function(char) {
+                char["pos"][0] += 1;
+            };
+            
+            this.moveUp = function(char) {
+                char["pos"][1] -= 1;
+            };
+            
+            this.moveDown = function(char) {
+                char["pos"][1] += 1;
+            };
+        };
+        
+        function TextAdventure () {
+            var world, player, worldWithChar;
+            
+            //define tools
+            var charTools = new CharacterTools();
             var worldTools = new WorldTools();
-            var player = new Character("Jacob", [5,5], "╓╖", "╙╜");
-            var world = makeWorld();
-            makeHTML(world, document.getElementById("myspan"));
-//            var world = makeTerrain(world);
-            var worldWithChar = placeChararcter(world, player);
-            makeHTML(worldWithChar, document.getElementById("myotherspan"))
             
+            // define objects and stuff
+            this.player = charTools.createCharacter("Jacob", [5,5], "╓╖", "╙╜");
+            this.world = worldTools.makeWorld();
+//            this.worldWithChar = worldTools.placeChararcter(this.world, this.player);
+//            worldTools.placeChar(this.world, this.player);
             
+            //make HTML shit
+            worldTools.makeHTML(this.world, document.getElementById("myspan"));
+//            worldTools.makeHTML(this.worldWithChar, document.getElementById("myotherspan"))
+                        
             document.onkeydown = function(e) {
                 switch (e.keyCode) {
                     case 37: // left
-                        player.moveLeft();
                         break;
                     case 38: // up
-                        player.moveUp();
                         break;
                     case 39: // right
-                        player.moveRight();
                         break;
                     case 40: // down
-                        player.moveDown();
                         break;
                 }
-                worldWithChar = placeChararcter(player, world)
-                makeHTML(worldWithChar, document.getElementById("myotherspan"));
+//                this.worldWithChar = placeChararcter(this.player, this.world)
+//                worldTools.makeHTML(this.worldWithChar, document.getElementById("myotherspan"));
             }
-        }
+        };
 
         var textAdventure = new TextAdventure();
-        alert(textAdventure.world);
-        changeText("myspan", textAdventure.world);
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
