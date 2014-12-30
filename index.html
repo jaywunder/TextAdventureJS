@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Changing The Text</title>
+<!--    <script src="file:///Users/JacobWunder/Documents/TextAdventureJS/main.js"></script>-->
+    <script src="http://requirejs.org/docs/release/2.1.15/minified/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <script>
+        function changeText(id, text) {
+            document.getElementById(id).innerHTML = text;
+            element = document.createElement("p");
+            element.innerHTML = text
+        };
+    </script>
+    <button type="button" onclick='changeText("myspan", "Some Text");'>Change Text</button>
+    <p> something or other</p>
+    <div id='myspan'>
+        <p> one p in the hand, is two in the bush </p>
+    </div>
+    <div id="myotherspan">
+        <p>but if you have two divs, well then you're golden</p>
+    </div>
+    <script>
+        var _ = require(["underscore"]);
+        var size = 30;
+        var upperWall = "▄▄";
+        var floor = "▀▀";
+        var leftWall = "▌ ";
+        var rightWall = " ▐";
+        var space = "  ";
+        var lightShading = "░░";
+        var medShading = "▒▒";
+        var darkShading = "▓▓";
+        var stones = "▒▒";
+        var flooring1 = "▞▞";
+        var flooring2 = "▚▚";
+        var RIGHTKEY = 124;
+        var UPKEY = 126;
+        var LEFTKEY = 123;
+        var DOWNKEY = 125;
+        
+        function WorldTools (){
+        }
+
+        function Character(name, pos, head, body) {
+            info = {
+                "name": name,
+                "pos": pos,
+                "head": head,
+                "body": body,
+                "title": "the peasant"
+            }
+            function moveLeft() {
+                this.pos[0] -= 1   
+            }
+            function moveRight() {
+                this.pos[0] += 1   
+            }
+            function moveUp() {
+                this.pos[1] -= 1   
+            }
+            function moveDown() {
+                this.pos[1] += 1   
+            }
+        }
+        
+        function TextAdventure () {
+            function makeWorld () {
+                var world = [];
+                var row = [];
+                var borderRow = [];
+                // Make normal rows
+                for (var i = 0; i < size; i++) {
+                    row.push(lightShading);
+                }
+                // Make border rows
+                for (var i = 0; i < size; i++) {
+                    borderRow.push(darkShading);
+                }
+                // Make array of arrays (world)
+                for (var i = 0; i < size; i++){
+                    world.push(row);
+                    world[i][0] = darkShading;
+                    world[i][size - 1] = darkShading;
+                }
+                //place borders in world
+                world[0] = borderRow;
+                world[world.length-1] = borderRow;
+                for (var i = 1; i < world.length; i++) {
+                    world[i][0] = darkShading;
+                    world[size - 1][size - 1] = darkShading;
+                }
+                return world;
+            }
+            
+            function makeTerrain (world) {
+                var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
+                for (var i = 0; i < _.random(size / 10, size / 2); i++) {
+                    var stonesCoord = [_.random(3, size - 3), _.random(3, size - 3)];
+                    world[stonesCoord[1]][stonesCoord[0]] = stones;
+                    for (var j = 0; j < _.random(3,9); j++) {
+                        world[stonesCoord[1] + _sample(numbers)][stonesCoord[0] + _.sample(numbers)] = stones;
+                    }
+                }
+                return world;
+            }
+            
+            function makeHTML (world, div) {
+                console.log(world);
+                var finalString = "";
+                var para, node, row;
+                for (var i = 0; i < world.length; i++) {
+                    var row = world[i].toString();
+                    for (var j = 0; j < world[i].length; j++) {
+                        row = row.replace(",", "");
+                    }
+                    para = document.createElement("h2");
+                    node = document.createTextNode(row);
+                    para.appendChild(node);
+                    div.appendChild(para);
+                }
+            }
+            
+            function placeCharacter(world, char) {
+                var newWorld = [];
+                newWorld = _.extend(newWorld, world);
+                newWorld[char.pos[1]][char.pos[0]] = char.head;
+                newWorld[char.pos[1]-1][char.pos[0]-1] = char.body;
+                return newWorld;
+            }
+            
+            var worldTools = new WorldTools();
+            var player = new Character("Jacob", [5,5], "╓╖", "╙╜");
+            var world = makeWorld();
+            makeHTML(world, document.getElementById("myspan"));
+//            var world = makeTerrain(world);
+            var worldWithChar = placeChararcter(world, player);
+            makeHTML(worldWithChar, document.getElementById("myotherspan"))
+            
+            
+            document.onkeydown = function(e) {
+                switch (e.keyCode) {
+                    case 37: // left
+                        player.moveLeft();
+                        break;
+                    case 38: // up
+                        player.moveUp();
+                        break;
+                    case 39: // right
+                        player.moveRight();
+                        break;
+                    case 40: // down
+                        player.moveDown();
+                        break;
+                }
+                worldWithChar = placeChararcter(player, world)
+                makeHTML(worldWithChar, document.getElementById("myotherspan"));
+            }
+        }
+
+        var textAdventure = new TextAdventure();
+        alert(textAdventure.world);
+        changeText("myspan", textAdventure.world);
+    </script>
+</body>
+</html>
