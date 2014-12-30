@@ -84,16 +84,21 @@
             
             this.makeHTML = function(world, div) {
                 var finalString = "";
-                var para, node, row, h2;
+                var para, node, row, h2, br;
                 h2 = document.createElement("h2");
-                div.appendChild(para);
+                para = document.createElement("p");
+                div.appendChild(h2);
+                h2.appendChild(para);
                 for (var i = 0; i < world.length; i++) {
                     row = world[i].toString();
-                    row = row.replace(",", "");
-                    para = document.createElement("br");
+                    for (var j = 0; j < world.length; j++) {
+                        row = row.replace(",", "");
+                    }
+//                    row += "<br>";
                     node = document.createTextNode(row);
+                    br = document.createElement("br");
                     para.appendChild(node);
-                    h2.appendChild(para);
+                    para.appendChild(br);
                 }
             };
             
@@ -107,8 +112,6 @@
         }
         
         function CharacterTools() {
-            var createCharacter;
-            
             this.createCharacter = function(_name, _pos, _head, _body) {
                 var newCharacter = {
                     "name": _name,
@@ -148,7 +151,6 @@
             this.player = charTools.createCharacter("Jacob", [5,5], "╓╖", "╙╜");
             this.world = worldTools.makeWorld();
 //            this.worldWithChar = worldTools.placeChararcter(this.world, this.player);
-//            worldTools.placeChar(this.world, this.player);
             
             //make HTML shit
             worldTools.makeHTML(this.world, document.getElementById("myspan"));
