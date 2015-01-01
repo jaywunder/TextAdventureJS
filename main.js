@@ -160,33 +160,30 @@ function TextAdventure () {
     // define objects and stuff
     this.player = charTools.createCharacter("Jacob", [5,5], "╓╖", "╙╜");
     this.world = worldTools.makeWorld();
-    this.worldWithChar = _.extend([], this.world);
-    charTools.placeChar(this.worldWithChar, this.player);
+    charTools.placeChar(this.world, this.player);
     
     //make HTML stuff
     worldTools.makeHTML(this.world, document.getElementById("myspan"));
-    worldTools.makeHTML(this.worldWithChar, document.getElementById("myotherspan"))
     
     var world = this.world;
     var player = this.player;
-    var worldWithChar = this.worldWithChar;
     document.onkeydown = function(e) {
         switch (e.keyCode) {
             case 37: // left
                 charTools.moveLeft(world, player);
-                worldTools.makeHTML(worldWithChar, document.getElementById("myotherspan"));
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 38: // up
                 charTools.moveUp(world, player);
-                worldTools.makeHTML(worldWithChar, document.getElementById("myotherspan"));
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 39: // right
                 charTools.moveRight(world, player);
-                worldTools.makeHTML(worldWithChar, document.getElementById("myotherspan"));
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 40: // down
                 charTools.moveDown(world, player);
-                worldTools.makeHTML(worldWithChar, document.getElementById("myotherspan"));
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
         }
     }
