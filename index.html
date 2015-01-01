@@ -3,8 +3,9 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Changing The Text</title>
-    <script src="http://requirejs.org/docs/release/2.1.15/minified/require.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="underscore-min.js"></script>
+    <script src="main.js"></script>
 </head>
 <body>
     <script>
@@ -23,155 +24,6 @@
         <p>but if you have two divs, well then you're golden</p>
     </div>
     <script>
-        var _ = require(["underscore"]);
-        var size = 30;
-        var upperWall = "▄▄";
-        var floor = "▀▀";
-        var leftWall = "▌ ";
-        var rightWall = " ▐";
-        var space = "  ";
-        var lightShading = "░░";
-        var medShading = "▒▒";
-        var darkShading = "▓▓";
-        var stones = "▒▒";
-        var flooring1 = "▞▞";
-        var flooring2 = "▚▚";
-        var RIGHTKEY = 124;
-        var UPKEY = 126;
-        var LEFTKEY = 123;
-        var DOWNKEY = 125;
-        
-        function WorldTools() {
-            this.makeWorld = function() {
-                var world = [];
-                var row = [];
-                var borderRow = [];
-                // Make normal rows
-                for (var i = 0; i < size; i++) {
-                    row.push(lightShading);
-                }
-                // Make border rows
-                for (var i = 0; i < size; i++) {
-                    borderRow.push(darkShading);
-                }
-                // Make array of arrays (world)
-                for (var i = 0; i < size; i++){
-                    world.push(row);
-                    world[i][0] = darkShading;
-                    world[i][size - 1] = darkShading;
-                }
-                //place borders in world
-                world[0] = borderRow;
-                world[world.length-1] = borderRow;
-                for (var i = 1; i < world.length; i++) {
-                    world[i][0] = darkShading;
-                    world[size - 1][size - 1] = darkShading;
-                }
-                return world;
-            };
-            
-            this.makeTerrain = function(world) {
-                var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
-                for (var i = 0; i < _.random(size / 10, size / 2); i++) {
-                    var stonesCoord = [_.random(3, size - 3), _.random(3, size - 3)];
-                    world[stonesCoord[1]][stonesCoord[0]] = stones;
-                    for (var j = 0; j < _.random(3,9); j++) {
-                        world[stonesCoord[1] + _.sample(numbers)][stonesCoord[0] + _.sample(numbers)] = stones;
-                    }
-                }
-                return world;
-            };
-            
-            this.makeHTML = function(world, div) {
-                var finalString = "";
-                var para, node, row, h2, br;
-                h2 = document.createElement("h2");
-                para = document.createElement("p");
-                div.appendChild(h2);
-                h2.appendChild(para);
-                for (var i = 0; i < world.length; i++) {
-                    row = world[i].toString();
-                    for (var j = 0; j < world.length; j++) {
-                        row = row.replace(",", "");
-                    }
-//                    row += "<br>";
-                    node = document.createTextNode(row);
-                    br = document.createElement("br");
-                    para.appendChild(node);
-                    para.appendChild(br);
-                }
-            };
-            
-            this.placeChar = function(world, char) {
-                var newWorld = [];
-                newWorld = _.extend(newWorld, world);
-                newWorld[char.pos[1]][char.pos[0]] = char.head;
-                newWorld[char.pos[1]-1][char.pos[0]-1] = char.body;
-                return newWorld;
-            };
-        }
-        
-        function CharacterTools() {
-            this.createCharacter = function(_name, _pos, _head, _body) {
-                var newCharacter = {
-                    "name": _name,
-                    "pos": _pos,
-                    "head": _head,
-                    "body": _body,
-                    "desc": "the peasant"
-                };
-                return newCharacter;
-            };
-            
-            this.moveLeft = function(char) {
-                char["pos"][0] -= 1;
-            };
-            
-            this.moveRight = function(char) {
-                char["pos"][0] += 1;
-            };
-            
-            this.moveUp = function(char) {
-                char["pos"][1] -= 1;
-            };
-            
-            this.moveDown = function(char) {
-                char["pos"][1] += 1;
-            };
-        };
-        
-        function TextAdventure () {
-            var world, player, worldWithChar;
-            
-            //define tools
-            var charTools = new CharacterTools();
-            var worldTools = new WorldTools();
-            
-            // define objects and stuff
-            this.player = charTools.createCharacter("Jacob", [5,5], "╓╖", "╙╜");
-            this.world = worldTools.makeWorld();
-//            this.worldWithChar = worldTools.placeChararcter(this.world, this.player);
-            
-            //make HTML shit
-            worldTools.makeHTML(this.world, document.getElementById("myspan"));
-//            worldTools.makeHTML(this.worldWithChar, document.getElementById("myotherspan"))
-                        
-            document.onkeydown = function(e) {
-                switch (e.keyCode) {
-                    case 37: // left
-                        break;
-                    case 38: // up
-                        break;
-                    case 39: // right
-                        break;
-                    case 40: // down
-                        break;
-                }
-//                this.worldWithChar = placeChararcter(this.player, this.world)
-//                worldTools.makeHTML(this.worldWithChar, document.getElementById("myotherspan"));
-            }
-        };
-
         var textAdventure = new TextAdventure();
     </script>
 </body>
