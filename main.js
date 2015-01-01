@@ -105,8 +105,8 @@ function CharacterTools(world, character) {
         if (char.pos[0] - 1 > 0) {
             world[char.pos[1]][char.pos[0]] = char.underBody;
             world[char.pos[1]-1][char.pos[0]] = char.underHead;
+            char.pos[0] -= 1; 
             this.placeChar(world, char);
-            char.pos[0] -= 1;    
         }
     }
 
@@ -114,8 +114,8 @@ function CharacterTools(world, character) {
         if (char.pos[0] + 1 < size-1) {
             world[char.pos[1]][char.pos[0]] = char.underBody;
             world[char.pos[1]-1][char.pos[0]] = char.underHead;
-            this.placeChar(world, char);
             char.pos[0] += 1;
+            this.placeChar(world, char);
         }
     }
 
@@ -123,8 +123,8 @@ function CharacterTools(world, character) {
         if (char.pos[1] - 1 > 0) {
             world[char.pos[1]][char.pos[0]] = char.underBody;
             world[char.pos[1]-1][char.pos[0]] = char.underHead;
+            char.pos[1] -= 1; 
             this.placeChar(world, char);
-            char.pos[1] -= 1;    
         }
     }
 
@@ -132,8 +132,8 @@ function CharacterTools(world, character) {
         if (char.pos[1] + 1 < size - 1) {
             world[char.pos[1]][char.pos[0]] = char.underBody;
             world[char.pos[1]-1][char.pos[0]] = char.underHead;
-            this.placeChar(world, char);
-            char.pos[1] += 1;   
+            char.pos[1] += 1; 
+            this.placeChar(world, char);  
         }
     }
     this.move = function(world, char, event) {
