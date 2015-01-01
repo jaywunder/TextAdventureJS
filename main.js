@@ -120,7 +120,7 @@ function CharacterTools(world, character) {
     }
 
     this.moveUp = function(world, char) {
-        if (char.pos[1] - 1 > 0) {
+        if (char.pos[1] - 2 > 0) {
             world[char.pos[1]][char.pos[0]] = char.underBody;
             world[char.pos[1]-1][char.pos[0]] = char.underHead;
             char.pos[1] -= 1; 
@@ -129,7 +129,7 @@ function CharacterTools(world, character) {
     }
 
     this.moveDown = function(world, char) {
-        if (char.pos[1] + 1 < size - 1) {
+        if (char.pos[1] + 2 < size - 1) {
             world[char.pos[1]][char.pos[0]] = char.underBody;
             world[char.pos[1]-1][char.pos[0]] = char.underHead;
             char.pos[1] += 1; 
