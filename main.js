@@ -13,7 +13,7 @@ var space = "  ";
 var lightShading = "░░";
 var medShading = "▒▒";
 var darkShading = "▓▓";
-var stones = "▒▒";
+var stones = ["▒▒"];
 var flooring1 = "▞▞";
 var flooring2 = "▚▚";
 var RIGHTKEY = 124;
@@ -56,7 +56,14 @@ function WorldTools() {
             var stonesCoord = [_.random(3, size - 3), _.random(3, size - 3)];
             world[stonesCoord[1]][stonesCoord[0]] = stones;
             for (var j = 0; j < _.random(3,9); j++) {
-                world[stonesCoord[1] + _.sample(numbers)][stonesCoord[0] + _.sample(numbers)] = stones;
+                var newStoneCoord = [stonesCoord[1] + _.sample(numbers), stonesCoord[0] + _.sample(numbers)];
+                try {
+                    if (world[newStoneCoord[1]][newStoneCoord[0]] != darkShading) {
+                        world[newStoneCoord[1]][newStoneCoord[0]] = _.sample(stones);
+                    }
+                } catch (err) {
+                    
+                }
             }
         }
         return world;
@@ -160,6 +167,7 @@ function TextAdventure () {
     // define objects and stuff
     this.player = charTools.createCharacter("Jacob", [5,5], "╓╖", "╙╜");
     this.world = worldTools.makeWorld();
+    this.world = worldTools.makeTerrain(this.world);
     charTools.placeChar(this.world, this.player);
     
     //make HTML stuff
@@ -185,6 +193,6 @@ function TextAdventure () {
                 charTools.moveDown(world, player);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
-        }
+        } 
     }
 }
