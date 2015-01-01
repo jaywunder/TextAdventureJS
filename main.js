@@ -4,7 +4,7 @@ window.addEventListener("keydown", function(e) {
     }
 }, false);
 
-var size = 30;
+var size = 100;
 var upperWall = "▄▄";
 var floor = "▀▀";
 var leftWall = "▌ ";
@@ -178,18 +178,22 @@ function TextAdventure () {
     document.onkeydown = function(e) {
         switch (e.keyCode) {
             case 37: // left
+                window.scrollBy(-20, 0);
                 charTools.moveLeft(world, player);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 38: // up
+                window.scrollBy(0, -35);
                 charTools.moveUp(world, player);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 39: // right
+                window.scrollBy(20, 0);
                 charTools.moveRight(world, player);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 40: // down
+                window.scrollBy(0, 35);
                 charTools.moveDown(world, player);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
