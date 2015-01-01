@@ -6,7 +6,7 @@ window.addEventListener("keydown", function(e) {
 
 var size = 100;
 var upperWall = "▄▄";
-var floor = "▀▀";
+var underwall = "▀▀";
 var leftWall = "▌ ";
 var rightWall = " ▐";
 var space = "  ";
@@ -16,10 +16,6 @@ var darkShading = "▓▓";
 var stones = ["▒▒"];
 var flooring1 = "▞▞";
 var flooring2 = "▚▚";
-var RIGHTKEY = 124;
-var UPKEY = 126;
-var LEFTKEY = 123;
-var DOWNKEY = 125;
 
 function WorldTools() {
     this.makeWorld = function () {
@@ -38,15 +34,45 @@ function WorldTools() {
         for (var i = 0; i < size; i++) {
             borderRow.push(darkShading);
         }
-        // Make array of arrays (world)
-//        for (var i = 0; i < size; i++){
-//            world.push(row);
-//            world[i][0] = darkShading;
-//            world[i][size - 1] = darkShading;
-//        }
         //place borders in world
         world[0] = borderRow;
         world[world.length-1] = borderRow;
+        return world;
+    }
+    
+    this.makeHouse = function(size) {
+        var house = Array(size);
+        for(var i=0; i < house.length; i++) {
+            var row = Array(size);
+            for(var j=0; j < row.length; j++) {
+                switch (j) {
+                    case 0:
+                        row[j] = "d";//leftWall;
+                    case size-1:
+                        row[j] = rightWall;
+                    default:
+                        row[j] = darkShading;
+                }
+                switch (i) {
+                    case 0:
+                        row[j] = "xx";
+                    case size-1:
+                        row[j] = "yy";
+                }
+            }
+            house[i] = row;
+        }
+        return house;
+    }
+    
+    this.placeStructure = function(struct, world, pos) {
+        var x = pos[0];
+        var y = pos[1];
+        for (var i=0; i < struct.length; i++) {
+            for (var j=0; j < struct[i].length; j++) {
+                world[y+i][x+j] = struct[i][j];
+            }
+        }
         return world;
     }
 
@@ -169,9 +195,12 @@ function TextAdventure () {
     this.world = worldTools.makeWorld();
     this.world = worldTools.makeTerrain(this.world);
     charTools.placeChar(this.world, this.player);
+    var house = worldTools.makeHouse(20);
+    this.world = worldTools.placeStructure(house,this.world, [50, 50]);
     
     //make HTML stuff
     worldTools.makeHTML(this.world, document.getElementById("myspan"));
+//    worldTools.makeHTML(house, document.getElementById("myotherspan"));
     
     var world = this.world;
     var player = this.player;
