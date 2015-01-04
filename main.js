@@ -14,8 +14,9 @@ var lightShading = "░░";
 var medShading = "▒▒";
 var darkShading = "▓▓";
 var stones = ["▒▒"];
-var flooring1 = "▞▞";
-var flooring2 = "▚▚";
+//var flooring1 = "▞▞";
+//var flooring2 = "▚▚";
+var flooring1 ="..";
 
 function WorldTools() {
     this.makeWorld = function () {
@@ -44,22 +45,27 @@ function WorldTools() {
         var house = Array(size);
         for(var i=0; i < house.length; i++) {
             var row = Array(size);
-            for(var j=0; j < row.length; j++) {
-                switch (j) {
-                    case 0:
-                        row[j] = "d";//leftWall;
-                    case size-1:
-                        row[j] = rightWall;
-                    default:
-                        row[j] = darkShading;
-                }
-                switch (i) {
-                    case 0:
-                        row[j] = "xx";
-                    case size-1:
-                        row[j] = "yy";
-                }
+            switch(i) {
+                case 0:
+                    for(var j=0; j < row.length; j++) {
+                        row[j] = upperWall;
+                    }
+                case size-1:
+                    for(var j=0; j < row.length; j++) {
+                        row[j] = underwall;
+                    }
+                default:
+                    if(i > 0 && i < size-1){
+                        for(var j=0; j < row.length; j++) {
+                            row[j] = flooring1;
+                        }
+                    }
+                    
             }
+            //place walls
+            row[0] = rightWall;
+            row[size-1] = leftWall;
+            //place row into the house
             house[i] = row;
         }
         return house;
@@ -92,8 +98,8 @@ function WorldTools() {
                 }
             }
         }
-        return world;
-}
+        return world;    
+    }
 
     this.makeHTML = function(world, div) {
         var finalString = "";
@@ -114,62 +120,77 @@ function WorldTools() {
     }
 }
 
-function CharacterTools(world, character) {
-    this.createCharacter = function(_name, _pos, _head, _body) {
-        var newCharacter = {
-            "name": _name,
-            "pos": _pos,
-            "head": _head,
-            "body": _body,
-            "desc": "the peasant",
-            "underHead": lightShading,
-            "underBody": lightShading
-        }
-        return newCharacter;
+function Character(world, name, pos, head, body) {
+    var info;
+    this.world = world;
+    this.pos = pos;
+    this.name = name;
+    this.head = head;
+    this.body = body;
+    this.underBody = lightShading;
+    this.underHead = lightShading;
+    this.info = {
+        "name": name,
+        "pos": pos,
+        "head": head,
+        "body": body,
+        "desc": "the peasant",
+        "underHead": lightShading,
+        "underBody": lightShading
     }
-    this.placeChar = function(world, char) {
-        char.underBody = world[char.pos[1]][char.pos[0]];
-        char.underHead = world[char.pos[1]-1][char.pos[0]];
-        world[char.pos[1]][char.pos[0]] = char.body;
-        world[char.pos[1]-1][char.pos[0]] = char.head;
+    
+    var world = this.world;
+    var pos = this.pos;
+    var name = this.name;
+    var head = this.head;
+    var body = this.body;
+    var underBody = this.underBody;
+    var underHead = this.underHead;
+    
+    this.placeChar = function(world) {
+        underBody = world[pos[1]][pos[0]];
+        underHead = world[pos[1]-1][pos[0]];
+        world[pos[1]][pos[0]] = body;
+        world[pos[1]-1][pos[0]] = head;
     }
-
-    this.moveLeft = function(world, char) {
-        if (char.pos[0] - 1 > 0) {
-            world[char.pos[1]][char.pos[0]] = char.underBody;
-            world[char.pos[1]-1][char.pos[0]] = char.underHead;
-            char.pos[0] -= 1; 
-            this.placeChar(world, char);
-        }
-    }
-
-    this.moveRight = function(world, char) {
-        if (char.pos[0] + 1 < size-1) {
-            world[char.pos[1]][char.pos[0]] = char.underBody;
-            world[char.pos[1]-1][char.pos[0]] = char.underHead;
-            char.pos[0] += 1;
-            this.placeChar(world, char);
-        }
-    }
-
-    this.moveUp = function(world, char) {
-        if (char.pos[1] - 2 > 0) {
-            world[char.pos[1]][char.pos[0]] = char.underBody;
-            world[char.pos[1]-1][char.pos[0]] = char.underHead;
-            char.pos[1] -= 1; 
-            this.placeChar(world, char);
+    var placeChar = this.placeChar;
+    
+    this.moveLeft = function(world) {
+        if (pos[0] - 1 > 0) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[0] -= 1; 
+            placeChar(world);
         }
     }
 
-    this.moveDown = function(world, char) {
-        if (char.pos[1] + 2 < size - 1) {
-            world[char.pos[1]][char.pos[0]] = char.underBody;
-            world[char.pos[1]-1][char.pos[0]] = char.underHead;
-            char.pos[1] += 1; 
-            this.placeChar(world, char);  
+    this.moveRight = function(world) {
+        if (pos[0] + 1 < size-1) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[0] += 1;
+            placeChar(world);
         }
     }
-    this.move = function(world, char, event) {
+
+    this.moveUp = function(world) {
+        if (pos[1] - 2 > 0) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[1] -= 1; 
+            placeChar(world);
+        }
+    }
+
+    this.moveDown = function(world) {
+        if (pos[1] + 2 < size - 1) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[1] += 1; 
+            placeChar(world);
+        }
+    }
+    this.move = function(world, event) {
         switch(event.keyCode) {
             case 37: // left
                 break;
@@ -184,23 +205,21 @@ function CharacterTools(world, character) {
 }
 
 function TextAdventure () {
-    var world, player, worldWithChar;
+    var world, player;
 
     //define tools
-    var charTools = new CharacterTools();
     var worldTools = new WorldTools();
 
     // define objects and stuff
-    this.player = charTools.createCharacter("Jacob", [5,5], "╓╖", "╙╜");
+    this.player = new Character(this.world, "Jacob", [5,5], "╓╖", "╙╜");
     this.world = worldTools.makeWorld();
     this.world = worldTools.makeTerrain(this.world);
-    charTools.placeChar(this.world, this.player);
+    this.player.placeChar(this.world);
     var house = worldTools.makeHouse(20);
     this.world = worldTools.placeStructure(house,this.world, [50, 50]);
     
     //make HTML stuff
     worldTools.makeHTML(this.world, document.getElementById("myspan"));
-//    worldTools.makeHTML(house, document.getElementById("myotherspan"));
     
     var world = this.world;
     var player = this.player;
@@ -208,22 +227,22 @@ function TextAdventure () {
         switch (e.keyCode) {
             case 37: // left
                 window.scrollBy(-20, 0);
-                charTools.moveLeft(world, player);
+                player.moveLeft(world);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 38: // up
                 window.scrollBy(0, -35);
-                charTools.moveUp(world, player);
+                player.moveUp(world);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 39: // right
                 window.scrollBy(20, 0);
-                charTools.moveRight(world, player);
+                player.moveRight(world);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 40: // down
                 window.scrollBy(0, 35);
-                charTools.moveDown(world, player);
+                player.moveDown(world);
                 worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
         } 
