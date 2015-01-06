@@ -7,8 +7,8 @@ window.addEventListener("keydown", function(e) {
 var size = 100;
 var upperWall = "▄▄";
 var underwall = "▀▀";
-var leftWall = "▌ ";
-var rightWall = " ▐";
+var leftWall = "▌.";
+var rightWall = ".▐";
 var space = "  ";
 var lightShading = "░░";
 var medShading = "▒▒";
@@ -17,6 +17,7 @@ var stones = ["▒▒"];
 //var flooring1 = "▞▞";
 //var flooring2 = "▚▚";
 var flooring1 ="..";
+var flooring2 = "××";
 
 function WorldTools() {
     this.makeWorld = function () {
@@ -51,20 +52,23 @@ function WorldTools() {
                         row[j] = upperWall;
                     }
                 case size-1:
-                    for(var j=0; j < row.length; j++) {
-                        row[j] = underwall;
+                    if (i > 0) {
+                        for(var j=0; j < row.length; j++) {
+                            row[j] = underwall;
+                        }
                     }
                 default:
                     if(i > 0 && i < size-1){
                         for(var j=0; j < row.length; j++) {
                             row[j] = flooring1;
-                        }
                     }
-                    
+                }
             }
             //place walls
-            row[0] = rightWall;
-            row[size-1] = leftWall;
+            if (i > 0 && i < size-1) {
+                row[0] = rightWall;
+                row[size-1] = leftWall;
+            }
             //place row into the house
             house[i] = row;
         }
@@ -121,7 +125,7 @@ function WorldTools() {
 }
 
 function Character(world, name, pos, head, body) {
-    var info;
+    //initialize variables
     this.world = world;
     this.pos = pos;
     this.name = name;
@@ -129,16 +133,8 @@ function Character(world, name, pos, head, body) {
     this.body = body;
     this.underBody = lightShading;
     this.underHead = lightShading;
-    this.info = {
-        "name": name,
-        "pos": pos,
-        "head": head,
-        "body": body,
-        "desc": "the peasant",
-        "underHead": lightShading,
-        "underBody": lightShading
-    }
     
+    //put variables in larger scope
     var world = this.world;
     var pos = this.pos;
     var name = this.name;
@@ -147,6 +143,7 @@ function Character(world, name, pos, head, body) {
     var underBody = this.underBody;
     var underHead = this.underHead;
     
+    //functions
     this.placeChar = function(world) {
         underBody = world[pos[1]][pos[0]];
         underHead = world[pos[1]-1][pos[0]];
@@ -154,6 +151,9 @@ function Character(world, name, pos, head, body) {
         world[pos[1]-1][pos[0]] = head;
     }
     var placeChar = this.placeChar;
+    
+    //place self
+    this.placeChar(this.world);
     
     this.moveLeft = function(world) {
         if (pos[0] - 1 > 0) {
@@ -190,39 +190,58 @@ function Character(world, name, pos, head, body) {
             placeChar(world);
         }
     }
-    this.move = function(world, event) {
-        switch(event.keyCode) {
+    /*   !!EXPIRIMENTAL!! 
+        Doesn't work at all   */
+    this.move = function(e) {
+        switch(e.keyCode) {
             case 37: // left
+                window.scrollBy(-20, 0);
+                player.moveLeft(world);
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 38: // up
+                window.scrollBy(0, -35);
+                player.moveUp(world);
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 39: // right
+                window.scrollBy(20, 0);
+                player.moveRight(world);
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
             case 40: // down
+                window.scrollBy(0, 35);
+                player.moveDown(world);
+                worldTools.makeHTML(world, document.getElementById("myspan"));
                 break;
         }
     }
 }
 
 function TextAdventure () {
-    var world, player;
-
+    var world, player, characters = [];
+    
     //define tools
     var worldTools = new WorldTools();
 
     // define objects and stuff
-    this.player = new Character(this.world, "Jacob", [5,5], "╓╖", "╙╜");
     this.world = worldTools.makeWorld();
     this.world = worldTools.makeTerrain(this.world);
-    this.player.placeChar(this.world);
+    this.player = new Character(this.world, "Jacob", [5,5], "╓╖", "╙╜");
+    characters.push(this.player);
     var house = worldTools.makeHouse(20);
-    this.world = worldTools.placeStructure(house,this.world, [50, 50]);
+    this.world = worldTools.placeStructure(house, this.world, [50, 50]);
     
     //make HTML stuff
     worldTools.makeHTML(this.world, document.getElementById("myspan"));
     
     var world = this.world;
     var player = this.player;
+    function moveCharacters() {
+        for (var i in characters) {
+            characters.move();
+        }
+    }
     document.onkeydown = function(e) {
         switch (e.keyCode) {
             case 37: // left
