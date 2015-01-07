@@ -5,26 +5,39 @@
     <title>Changing The Text</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="underscore-min.js"></script>
+    <script src="jquery-1.11.2.min.js"></script>
     <script src="main.js"></script>
 </head>
 <body>
     <script>
-        function changeText(id, text) {
-            document.getElementById(id).innerHTML = text;
-            element = document.createElement("p");
-            element.innerHTML = text
-        };
+        //ready function
+        $(document).ready(function() {
+            $("#sidebar").css("height", $(window).height() + "px");
+            $("#footer").css("width", $(window).width() * 0.8 + "px");
+            $("#content").css("width", $(window).width() * 0.8 + "px");
+        });
+        //resize function
+        $(window).resize(function () {
+            $("#sidebar").css("height", $(window).height() + "px");
+            $("#footer").css("width", $(window).width() * 0.8 + "px");
+            $("#content").css("width", $(window).width() * 0.8 + "px");
+        });
     </script>
-    <p> something or other</p>
-    <div id='myspan'>
-    </div>
-    <div id="myotherspan">
-        <p>but if you have two divs, well then you're golden</p>
+    <div id="content">
+        
     </div>
     <script>
         var textAdventure = new TextAdventure();
     </script>
+    <div id="sidebar">
+        <h1>something good</h1>
+    </div>
+    <div id="footer">
+        <h1>THE BOTTOM GUI</h1>
+    </div>
 </body>
+<footer> 
+</footer>
 </html>
 
 

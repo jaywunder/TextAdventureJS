@@ -7,17 +7,20 @@ window.addEventListener("keydown", function(e) {
 var size = 100;
 var upperWall = "▄▄";
 var underwall = "▀▀";
-var leftWall = "▌.";
-var rightWall = ".▐";
-var space = "  ";
+var leftWall = "▌·";
+var rightWall = "·▐";
+var space = "··";
+var corners = ["·▄", "▄·", "·▀", "▀·"];
 var lightShading = "░░";
 var medShading = "▒▒";
 var darkShading = "▓▓";
 var stones = ["▒▒"];
 //var flooring1 = "▞▞";
 //var flooring2 = "▚▚";
-var flooring1 ="..";
+var flooring1 ="··";
 var flooring2 = "××";
+
+var container = "content";
 
 function WorldTools() {
     this.makeWorld = function () {
@@ -90,7 +93,7 @@ function WorldTools() {
         var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
         for (var i = 0; i < _.random(size / 10, size / 2); i++) {
             var stonesCoord = [_.random(3, size - 3), _.random(3, size - 3)];
-            world[stonesCoord[1]][stonesCoord[0]] = stones;
+            world[stonesCoord[1]][stonesCoord[0]] = _.sample(stones);
             for (var j = 0; j < _.random(3,9); j++) {
                 var newStoneCoord = [stonesCoord[1] + _.sample(numbers), stonesCoord[0] + _.sample(numbers)];
                 try {
@@ -106,7 +109,6 @@ function WorldTools() {
     }
 
     this.makeHTML = function(world, div) {
-        var finalString = "";
         var para, node, row, h2, br;
         h2 = document.createElement("h2");
         para = document.createElement("p");
@@ -190,32 +192,6 @@ function Character(world, name, pos, head, body) {
             placeChar(world);
         }
     }
-    /*   !!EXPIRIMENTAL!! 
-        Doesn't work at all   */
-    this.move = function(e) {
-        switch(e.keyCode) {
-            case 37: // left
-                window.scrollBy(-20, 0);
-                player.moveLeft(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-            case 38: // up
-                window.scrollBy(0, -35);
-                player.moveUp(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-            case 39: // right
-                window.scrollBy(20, 0);
-                player.moveRight(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-            case 40: // down
-                window.scrollBy(0, 35);
-                player.moveDown(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-        }
-    }
 }
 
 function TextAdventure () {
@@ -233,7 +209,7 @@ function TextAdventure () {
     this.world = worldTools.placeStructure(house, this.world, [50, 50]);
     
     //make HTML stuff
-    worldTools.makeHTML(this.world, document.getElementById("myspan"));
+    worldTools.makeHTML(this.world, document.getElementById(container));
     
     var world = this.world;
     var player = this.player;
@@ -243,27 +219,27 @@ function TextAdventure () {
         }
     }
     document.onkeydown = function(e) {
-        switch (e.keyCode) {
-            case 37: // left
-                window.scrollBy(-20, 0);
-                player.moveLeft(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-            case 38: // up
-                window.scrollBy(0, -35);
-                player.moveUp(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-            case 39: // right
-                window.scrollBy(20, 0);
-                player.moveRight(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-            case 40: // down
-                window.scrollBy(0, 35);
-                player.moveDown(world);
-                worldTools.makeHTML(world, document.getElementById("myspan"));
-                break;
-        } 
+        try {
+            switch (e.keyCode) {
+                case 37: // left
+                    player.moveLeft(world);
+                    break;
+                case 38: // up
+                    player.moveUp(world);
+                    break;
+                case 39: // right
+                    player.moveRight(world);
+                    break;
+                case 40: // down
+                    player.moveDown(world);
+                    break;
+            }
+        } catch (err) {
+            //there won't be an error, this is just to have the
+            //"finally" statement, even though I'm using "break"
+            //after the arrow keys
+        } finally {
+            worldTools.makeHTML(world, document.getElementById(container));
+        }
     }
 }
