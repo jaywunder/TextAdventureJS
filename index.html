@@ -4,57 +4,44 @@
     <meta charset="UTF-8">
     <title>Changing The Text</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <script src="underscore-min.js"></script>
     <script src="jquery-1.11.2.min.js"></script>
     <script src="main.js"></script>
 </head>
 <body>
+    <span id="char-span">
+        <h2>▒▒</h2>
+    </span>
+    <div id="content">
+        <h2 id="world-h2"></h2>
+    </div>
     <script>
+        //create the text adventure
+        var textAdventure = new TextAdventure();
+        
         //ready function
         $(document).ready(function() {
             $("#sidebar").css("height", $(window).height() + "px");
             $("#footer").css("width", $(window).width() * 0.8 + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
         });
+        
         //resize function
         $(window).resize(function () {
             $("#sidebar").css("height", $(window).height() + "px");
+            $("#sidebar").css("width", ($(window).width() - $("#content").width()) + "px");
             $("#footer").css("width", $(window).width() * 0.8 + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
         });
-    </script>
-    <div id="content">
-        
-    </div>
-    <script>
-        var textAdventure = new TextAdventure();
     </script>
     <div id="sidebar">
         <h1>something good</h1>
     </div>
     <div id="footer">
-        <h1>THE BOTTOM GUI</h1>
+        <h1 id="bottom-text">THE BOTTOM GUI</h1>
     </div>
 </body>
 <footer> 
 </footer>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

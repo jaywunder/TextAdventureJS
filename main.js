@@ -45,6 +45,25 @@ function WorldTools() {
         return world;
     }
     
+    this.getSection = function(world, pos) {
+        var charWidth = $("#char-span").width();
+        var charHeight = $("#char-span").height();
+        var width = $("#content").width();
+        var height = $("#content").height();
+        var x = pos[0], y = pos[1];
+        
+        var section = [];
+        
+        for (var i=0; i < height / charHeight; i++) {
+            var row = [];
+            for (var j=0; j < width / charWidth - 1; j++) {
+                row.push(world[y+i][x+j]);
+            }
+            section.push(row);
+        }
+        return section;
+    }
+    
     this.makeHouse = function(size) {
         var house = Array(size);
         for(var i=0; i < house.length; i++) {
@@ -111,18 +130,18 @@ function WorldTools() {
     this.makeHTML = function(world, div) {
         var para, node, row, h2, br;
         h2 = document.createElement("h2");
-        para = document.createElement("p");
+        h2 = document.getElementById("world-h2");
         div.appendChild(h2);
-        h2.appendChild(para);
+        h2.innerHTML = "";
         for (var i = 0; i < world.length; i++) {
             row = world[i].join('');
             node = document.createTextNode(row);
             br = document.createElement("br");
-            para.appendChild(node);
-            para.appendChild(br);
+//            para.appendChild(node);
+//            para.appendChild(br);
+            h2.appendChild(node);
+            h2.appendChild(br);
         }
-        div.innerHTML = "";
-        div.appendChild(h2);
     }
 }
 
@@ -133,8 +152,8 @@ function Character(world, name, pos, head, body) {
     this.name = name;
     this.head = head;
     this.body = body;
-    this.underBody = lightShading;
-    this.underHead = lightShading;
+    this.underBody = world[pos[1]][pos[0]];
+    this.underHead = world[pos[1]-1][pos[0]];
     
     //put variables in larger scope
     var world = this.world;
@@ -146,6 +165,13 @@ function Character(world, name, pos, head, body) {
     var underHead = this.underHead;
     
     //functions
+    this.x = function() {
+        return pos[0]
+    }
+    this.y = function() {
+        return pos[1]
+    }
+    
     this.placeChar = function(world) {
         underBody = world[pos[1]][pos[0]];
         underHead = world[pos[1]-1][pos[0]];
@@ -195,7 +221,7 @@ function Character(world, name, pos, head, body) {
 }
 
 function TextAdventure () {
-    var world, player, characters = [];
+    var world, player, characters = [], worldPos = [0,0];
     
     //define tools
     var worldTools = new WorldTools();
@@ -208,30 +234,54 @@ function TextAdventure () {
     var house = worldTools.makeHouse(20);
     this.world = worldTools.placeStructure(house, this.world, [50, 50]);
     
+    var worldSection = worldTools.getSection(this.world, worldPos);
+    
     //make HTML stuff
-    worldTools.makeHTML(this.world, document.getElementById(container));
+    worldTools.makeHTML(worldSection, document.getElementById(container));
     
     var world = this.world;
     var player = this.player;
-    function moveCharacters() {
-        for (var i in characters) {
-            characters.move();
-        }
-    }
+    var sectionWidth = worldSection[0].length;
+    var sectionHeight = worldSection.length;
+    
+    $(window).on("resize", function(){
+        var worldSection = worldTools.getSection(world, worldPos);
+        worldTools.makeHTML(worldSection, document.getElementById(container));
+    });
+    
     document.onkeydown = function(e) {
+        var worldSection = worldTools.getSection(world, worldPos);
+        var sectionWidth = worldSection[0].length;
+        var sectionHeight = worldSection.length;
         try {
             switch (e.keyCode) {
                 case 37: // left
                     player.moveLeft(world);
+                    if (player.x() < worldPos[0] + (sectionWidth / 6) 
+                        && worldPos[0] > 0) {
+                        worldPos[0] -= 1;
+                    }
                     break;
                 case 38: // up
                     player.moveUp(world);
+                    if (player.y() < worldPos[1] + (sectionHeight / 6) 
+                        && worldPos[1] > 0) {
+                        worldPos[1] -= 1;
+                    }
                     break;
                 case 39: // right
                     player.moveRight(world);
+                    if (player.x() > sectionWidth - (sectionWidth / 6) 
+                       && worldPos[0] + sectionWidth < world[0].length) {
+                        worldPos[0] += 1;
+                    }
                     break;
                 case 40: // down
                     player.moveDown(world);
+                    if (player.y() > sectionHeight - (sectionHeight / 6)
+                       && worldPos[1] + sectionHeight < world.length) {
+                        worldPos[1] += 1;
+                    }
                     break;
             }
         } catch (err) {
@@ -239,7 +289,9 @@ function TextAdventure () {
             //"finally" statement, even though I'm using "break"
             //after the arrow keys
         } finally {
-            worldTools.makeHTML(world, document.getElementById(container));
+            var worldSection = worldTools.getSection(world, worldPos);
+            worldTools.makeHTML(worldSection, document.getElementById(container));
+            $("#bottom-text").text(worldPos);
         }
     }
 }
