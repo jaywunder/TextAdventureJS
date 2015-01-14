@@ -137,15 +137,109 @@ function WorldTools() {
             row = world[i].join('');
             node = document.createTextNode(row);
             br = document.createElement("br");
-//            para.appendChild(node);
-//            para.appendChild(br);
             h2.appendChild(node);
             h2.appendChild(br);
         }
     }
 }
 
-function Character(world, name, pos, head, body) {
+function Entity(){
+}
+
+function NPC(world, name, pos, head, body) {
+    //subclass from this
+    this.world = world;
+    this.pos = pos;
+    this.name = name;
+    this.head = head;
+    this.body = body;
+    this.underBody = world[pos[1]][pos[0]];
+    this.underHead = world[pos[1]-1][pos[0]];
+    
+    //put variables in larger scope
+    var world = this.world;
+    var pos = this.pos;
+    var name = this.name;
+    var head = this.head;
+    var body = this.body;
+    var underBody = this.underBody;
+    var underHead = this.underHead;
+    
+    //functions
+    this.x = function() {
+        return pos[0]
+    }
+    this.y = function() {
+        return pos[1]
+    }
+    
+    this.placeChar = function(world) {
+        underBody = world[pos[1]][pos[0]];
+        underHead = world[pos[1]-1][pos[0]];
+        world[pos[1]][pos[0]] = body;
+        world[pos[1]-1][pos[0]] = head;
+    }
+    var placeChar = this.placeChar;
+    
+    //place self
+    this.placeChar(this.world);
+    
+    this.moveLeft = function(world) {
+        if (pos[0] - 1 > 0) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[0] -= 1; 
+            placeChar(world);
+        }
+    }
+
+    this.moveRight = function(world) {
+        if (pos[0] + 1 < size-1) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[0] += 1;
+            placeChar(world);
+        }
+    }
+
+    this.moveUp = function(world) {
+        if (pos[1] - 2 > 0) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[1] -= 1; 
+            placeChar(world);
+        }
+    }
+
+    this.moveDown = function(world) {
+        if (pos[1] + 2 < size - 1) {
+            world[pos[1]][pos[0]] = underBody;
+            world[pos[1]-1][pos[0]] = underHead;
+            pos[1] += 1; 
+            placeChar(world);
+        }
+    }
+    var moveUp = this.moveUp;
+    var moveDown = this.moveDown;
+    var moveLeft = this.moveLeft;
+    var moveRight = this.moveRight;
+    
+     var wander = function() {
+        var moveChoices = [moveUp, moveDown, moveRight, moveLeft];
+        if (_.random(5) == _.random(5)) {
+            var direction = _.sample(moveChoices);
+            for (var i=0; i < _.random(4); i++) {
+                
+                window.setTimeout(function() {direction(world);}, 500 * i);
+//                direction(world);
+            }
+        }
+    }
+    this.update = wander;
+    
+}
+
+function Player(world, name, pos, head, body) {
     //initialize variables
     this.world = world;
     this.pos = pos;
@@ -223,31 +317,53 @@ function Character(world, name, pos, head, body) {
 function TextAdventure () {
     var world, player, characters = [], worldPos = [0,0];
     
-    //define tools
+    //  define tools
     var worldTools = new WorldTools();
 
-    // define objects and stuff
+    //  make world
     this.world = worldTools.makeWorld();
     this.world = worldTools.makeTerrain(this.world);
-    this.player = new Character(this.world, "Jacob", [5,5], "╓╖", "╙╜");
-    characters.push(this.player);
+    
+    //  make characters
+    this.player = new Player(this.world, "Jacob", [5,5], "╓╖", "╙╜");
+    var npc1 = new NPC(this.world, "npc1", [12,12], "xx", "xx");
+    characters.push(npc1);
+    
+    //  make structures
     var house = worldTools.makeHouse(20);
     this.world = worldTools.placeStructure(house, this.world, [50, 50]);
     
+    //  make HTML
     var worldSection = worldTools.getSection(this.world, worldPos);
-    
-    //make HTML stuff
     worldTools.makeHTML(worldSection, document.getElementById(container));
     
+    //  put into bigger scope for other functions
     var world = this.world;
     var player = this.player;
     var sectionWidth = worldSection[0].length;
     var sectionHeight = worldSection.length;
     
+    function updateCharacters() {
+        for (i in characters) {
+            characters[i].update(world);
+        }
+        var worldSection = worldTools.getSection(world, worldPos);
+        worldTools.makeHTML(worldSection, document.getElementById(container));
+    }
+    
+    window.setInterval(updateCharacters, 300);
+    
     $(window).on("resize", function(){
         var worldSection = worldTools.getSection(world, worldPos);
         worldTools.makeHTML(worldSection, document.getElementById(container));
+        npc1.moveDown(world)
     });
+    
+    function updateHTML() {
+        var worldSection = worldTools.getSection(world, worldPos);
+        worldTools.makeHTML(worldSection, document.getElementById(container));
+    }
+    window.setInterval(updateHTML, 10);
     
     document.onkeydown = function(e) {
         var worldSection = worldTools.getSection(world, worldPos);
@@ -285,13 +401,12 @@ function TextAdventure () {
                     break;
             }
         } catch (err) {
-            //there won't be an error, this is just to have the
-            //"finally" statement, even though I'm using "break"
-            //after the arrow keys
+            //  there won't be an error, this is just to have the
+            //  "finally" statement, even though I'm using "break"
+            //  after the arrow keys
         } finally {
-            var worldSection = worldTools.getSection(world, worldPos);
-            worldTools.makeHTML(worldSection, document.getElementById(container));
-            $("#bottom-text").text(worldPos);
+            //  might do something in the future
         }
     }
 }
+

@@ -22,17 +22,19 @@
         
         //ready function
         $(document).ready(function() {
-            $("#sidebar").css("height", $(window).height() + "px");
-            $("#footer").css("width", $(window).width() * 0.8 + "px");
+            $("#sidebar").css("height", $(window).height() - $("#world-h2").height() + "px");
+            $("#sidebar").css("height", $(window).width() - $("#world-h2").width() + "px");
+            $("#footer").css("width", $("#world-h2").width() + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
         });
         
         //resize function
         $(window).resize(function () {
-            $("#sidebar").css("height", $(window).height() + "px");
-            $("#sidebar").css("width", ($(window).width() - $("#content").width()) + "px");
-            $("#footer").css("width", $(window).width() * 0.8 + "px");
+            $("#sidebar").css("height", $(window).height() - $("#world-h2").height() + "px");
+            $("#sidebar").css("height", $(window).width() - $("#world-h2").width() + "px");
+            $("#footer").css("width", $("#world-h2").width() + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
+//            alert($("#footer").width() + "   " + $("#world-h2").width());
         });
     </script>
     <div id="sidebar">
