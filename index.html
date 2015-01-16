@@ -14,7 +14,9 @@
         <h2>▒▒</h2>
     </span>
     <div id="content">
-        <h2 id="world-h2"></h2>
+        <span id="world-span">
+            <h2 id="world-h2"></h2>
+        </span>
     </div>
     <script>
         //create the text adventure
@@ -22,17 +24,17 @@
         
         //ready function
         $(document).ready(function() {
-            $("#sidebar").css("height", $(window).height() - $("#world-h2").height() + "px");
-            $("#sidebar").css("height", $(window).width() - $("#world-h2").width() + "px");
-            $("#footer").css("width", $("#world-h2").width() + "px");
+            $("#sidebar").css("height", $(window).height() - $("#world-span").height() + "px");
+            $("#sidebar").css("height", $(window).width() - $("#world-span").width() + "px");
+            $("#footer").css("width", $("#world-span").width() + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
         });
         
         //resize function
         $(window).resize(function () {
-            $("#sidebar").css("height", $(window).height() - $("#world-h2").height() + "px");
-            $("#sidebar").css("height", $(window).width() - $("#world-h2").width() + "px");
-            $("#footer").css("width", $("#world-h2").width() + "px");
+            $("#sidebar").css("height", $(window).height() - $("#world-span").height() + "px");
+            $("#sidebar").css("height", $(window).width() - $("#world-span").width() + "px");
+            $("#footer").css("width", $("#world-span").width() + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
 //            alert($("#footer").width() + "   " + $("#world-h2").width());
         });

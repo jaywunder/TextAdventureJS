@@ -20,7 +20,7 @@ var stones = ["▒▒"];
 var flooring1 ="··";
 var flooring2 = "××";
 
-var container = "content";
+var container = "world-span";
 
 function WorldTools() {
     this.makeWorld = function () {
@@ -134,20 +134,37 @@ function WorldTools() {
         div.appendChild(h2);
         h2.innerHTML = "";
         for (var i = 0; i < world.length; i++) {
-            row = world[i].join('');
-            node = document.createTextNode(row);
+            var span = document.createElement("span");
+//            span.id = i + ",0";
+            for (var j = 1; j < world[i].length; j++) {
+                if (world[i][j] == world[i][j-1]) {
+                    node = document.createTextNode(world[i][j]);
+                    span.appendChild(node);
+                    h2.appendChild(span);
+                } else {
+                    var span = document.createElement("span");
+                    node = document.createTextNode(world[i][j]);
+                    span.appendChild(node);
+                    h2.appendChild(span);
+                }
+            }
             br = document.createElement("br");
-            h2.appendChild(node);
             h2.appendChild(br);
+            
+//            row = world[i].join('');
+//            node = document.createTextNode(row);
+//            br = document.createElement("br");
+//            h2.appendChild(node);
+//            h2.appendChild(br);
         }
     }
 }
 
 function Entity(){
+    //subclass from this, once there's something to subclass
 }
 
 function NPC(world, name, pos, head, body) {
-    //subclass from this
     this.world = world;
     this.pos = pos;
     this.name = name;
@@ -326,7 +343,7 @@ function TextAdventure () {
     
     //  make characters
     this.player = new Player(this.world, "Jacob", [5,5], "╓╖", "╙╜");
-    var npc1 = new NPC(this.world, "npc1", [12,12], "xx", "xx");
+    var npc1 = new NPC(this.world, "npc1", [12,12], "╓╖", "╙╜");
     characters.push(npc1);
     
     //  make structures
@@ -350,7 +367,6 @@ function TextAdventure () {
         var worldSection = worldTools.getSection(world, worldPos);
         worldTools.makeHTML(worldSection, document.getElementById(container));
     }
-    
     window.setInterval(updateCharacters, 300);
     
     $(window).on("resize", function(){
