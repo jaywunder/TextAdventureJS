@@ -160,8 +160,93 @@ function WorldTools() {
     }
 }
 
-function Entity(){
-    //subclass from this, once there's something to subclass
+function Entity(world, name, pos, head, body){
+    //  instantiate variables
+    var world = world;
+    var name = name;
+    var pos = pos;
+    var head = head;
+    var body = body;
+    
+    /*  getter functions */
+    this.getWorld = function() {
+        return world;
+    }
+    this.getname = function() {
+        return name;
+    }
+    this.getPos = function() {
+        return pos;
+    }
+    this.getHead = function() {
+        return head;
+    }
+    this.getBody = function() {
+        return body;
+    }
+    this.getX = function() {
+        return pos[0];
+    }
+    this.getY = function() {
+        return pos[1];
+    }
+    
+    /*  setter functions  */
+    this.setWorld = function(newWorld, newPos) {
+        world = newWorld;
+        pos = newPos;
+    }
+    this.setName = function(newName) {
+        name = newName;
+    }
+    this.setPos = function(newPos) {
+        pos = newPos;
+    }
+    this.setHead = function(newHead) {
+        head = newHead;
+    }
+    this.setBody = function(newBody) {
+        body = newBody;
+    }
+    this.setX = function(newX) {
+        pos[0] = newX;
+    }
+    this.setY = function(newY) {
+        pos[1] = newY;
+    }
+    
+    /*  movement functions  */
+    this.moveLeft = function() {
+        pos[0] -= 1;
+    }
+    var moveLeft = this.moveLeft;
+    this.moveRight = function() {
+        pos[0] -= 1;
+    }
+    var moveRight = this.moveRight;
+    this.moveUp = function() {
+        pos[1] -= 1;
+    }
+    var moveUp = this.moveUp;
+    this.moveDown = function() {
+        pos[1] += 1
+    }
+    var moveDown = this.moveDown;
+    /*  other functions  */
+    this.wander = function() {
+        var moveChoices = [moveUp, moveDown, moveRight, moveLeft];
+        if (_.random(5) == _.random(5)) {
+            var direction = _.sample(moveChoices);
+            for (var i=0; i < _.random(4); i++) {
+                
+                window.setTimeout(function() { direction() }, 500 * i);
+//                direction(world);
+            }
+        }
+    }
+    this.update = function() {
+        //override this if anything is to be done
+    }
 }
 
 function NPC(world, name, pos, head, body) {
