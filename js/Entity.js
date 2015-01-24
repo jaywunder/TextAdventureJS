@@ -233,7 +233,7 @@ function Player(world, name, pos, head, body, gender) {
         player.moveRight();
       }
     }
-    return player;
   }
+  return player;
   document.onkeydown = player.update;
 }
