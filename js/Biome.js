@@ -1,24 +1,157 @@
 var SIZE = 100;
-
-var tiles = {
+var Tiles = {
   underwall: "▀▀",
   upperWall: "▄▄",
-  leftWall : "▌·",
-  rightWall : "·▐",
-  space : "··",
-  topLeft : "·▄",
-  topRight : "▄·",
-  bottomLeft : "·▀",
-  bottomRight : "▀·",
-  lightShading : "░░",
-  medShading : "▒▒",
-  darkShading : "▓▓",
-  stones : ["▒▒"],
-  flooring1 :"··",
-  flooring2 : "××",
+  leftWall: "▌·",
+  rightWall: "·▐",
+  space: "··",
+  topLeft: "·▄",
+  topRight: "▄·",
+  bottomLeft: "·▀",
+  bottomRight: "▀·",
+  shadingLight: "░░",
+  shadingMed: "▒▒",
+  shadingDark: "▓▓",
+  stones: ["▒▒"],
+  flooring1:"··",
+  flooring2: "××",
+  noTexture: "xx",
+}
+var BiomeTypes = {
+  template: {
+    id: "",
+    tiles: {
+      base: Tiles.noTexture,
+      tex: Tiles.noTexture,
+      border: Tiles.noTexture,
+    },
+    desc: "",
+    spawnable: [],
+    generate: function(tiles) {},
+  },
+  plains: {
+    id: "plains",
+    tiles: {
+      base: Tiles.shadingLight,
+      tex: Tiles.shadingMed,
+      border: Tiles.shadingDark,
+    },
+    desc: "Beautiful grassy plains. Maybe you'll find a village!",
+    spawnable: [
+      "villager",
+      "orc",
+    ],
+    generate: function(tiles) {
+      var map = [];
+      //MAKE BASE MAP
+      for (var y = 0; i < SIZE; i++) {
+        var row = [];
+        for (var x = 0; j < SIZE; j++) {
+          /*I'm using if-else statments because of performance.
+            Switch statements are aparently thirty times slower than 
+            if-else on chrome, and it would be nice to have good performance,
+            even if that means sacrificing readability */
+          if (x == 0) { // far left side
+            row[x] = tiles.border;
+          } else if (x < SIZE){ // walkable terrain
+            if (x == 0) { //top row
+              row[x] = tiles.border;
+            } else if () { //middle
+              row[x] = tiles.base;
+            } else { //bottom row
+              row[x] = tiles.border;
+            }
+          } else if (x == SIZE) { // far right side
+            row[x] = tiles.border;
+          }
+        }
+        map.push(row);
+      }
+      //TEXTURE MAP
+      var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
+      for (var i = 0; i < _.random(SIZE / 10, SIZE / 2); i++) {
+        var stonesPos = [_.random(3, SIZE - 3), _.random(3, SIZE - 3)];
+        map[stonesPos[1]][stonesPos[0]] = tiles.tex;
+        for (var j = 0; j < _.random(3, 9); j++) {
+          var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
+          try {
+              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex;
+            }
+          } catch (err) {
+
+          }
+        }
+      return map
+      },
+    },
+  },
+  rocky: {
+    id: "rocky",
+    tiles: {
+      base: Tiles.shadingLight,
+      tex: Tiles.shadingDark,
+      border: Tiles.shadingDark,
+    },
+    desc: "Rocky terrain, difficult to walk on",
+    spawnable: [
+      "orc",
+      //dwarf in future
+    ],
+    generate: function(tiles) {
+      var map = [];
+      //MAKE BASE MAP
+      for (var y = 0; i < SIZE; i++) {
+        var row = [];
+        for (var x = 0; j < SIZE; j++) {
+          /*I'm using if-else statments because of performance.
+            Switch statements are aparently thirty times slower than 
+            if-else on chrome, and it would be nice to have good performance,
+            even if that means sacrificing readability */
+          if (x == 0) { // far left side
+            row[x] = tiles.border;
+          } else if (x < SIZE){ // walkable terrain
+            if (x == 0) { //top row
+              row[x] = tiles.border;
+            } else if () { //middle
+              row[x] = tiles.base;
+            } else { //bottom row
+              row[x] = tiles.border;
+            }
+          } else if (x == SIZE) { // far right side
+            row[x] = tiles.border;
+          }
+        }
+        map.push(row);
+      }
+      //TEXTURE MAP
+      var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
+      for (var i = 0; i < _.random(SIZE / 10, SIZE / 2); i++) {
+        var stonesPos = [_.random(3, SIZE - 3), _.random(3, SIZE - 3)];
+        map[stonesPos[1]][stonesPos[0]] = tiles.tex;
+        for (var j = 0; j < _.random(3, 9); j++) {
+          var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
+          try {
+              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex;
+            }
+          } catch (err) {
+
+          }
+        }
+      return map
+    },
+  },
 }
 
-var container = "world-span";
+function BiomeBuilder (id, pos) {
+  var biome = {
+    pos: pos,
+    entites: {},
+    objects: {},
+    above: [],
+    below: BiomeTypes[id].generate(BiomeTypes[id].tiles),
+  };
+  return biome;
+}
 
 function WorldTools() {
   this.makeWorld = function() {
@@ -41,13 +174,6 @@ function WorldTools() {
     world[0] = borderRow;
     world[world.length-1] = borderRow;
     return world;
-  }
-  
-  this.makeLayeredWorld = function(bottomLayers, entities, upperLayers) {
-    var world = bottomLayers[0];
-    for (var layer = 1; layer < bottomLayers.length; layer++) {
-      
-    }
   }
   
   this.getSection = function(world, pos) {
@@ -156,19 +282,5 @@ function WorldTools() {
       br = document.createElement("br");
       h2.appendChild(br);
     }
-  }
-}
-
-function Biome(size, type) {
-  var size = size;
-  var type = type;
-  var biome = {
-      below: [],
-      entities: {},
-      objects: {},
-      above: []
-    }
-  var biomeMaker = function() {
-    
   }
 }

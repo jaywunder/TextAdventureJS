@@ -1,10 +1,10 @@
-Parts = {
+var Parts = {
   noTexture: "xx",
   playerHead: "╓╖",
   playerBody: "╙╜",
 }
 
-AI = {
+var AI = {
   wander: function() {
     var moveChoices = [moveUp, moveDown, moveRight, moveLeft];
     if (_.random(5) == _.random(5)) {
@@ -19,7 +19,7 @@ AI = {
   },
 }
 
-EntityTypes = {
+var EntityTypes = {
   orc: {
     id: "orc",
     head: Parts.noTexture,

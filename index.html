@@ -3,19 +3,22 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Changing The Text</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <script src="underscore-min.js"></script>
-    <script src="jquery-1.11.2.min.js"></script>
-    <script src="main.js"></script>
+    <script src="lib/underscore-min.js"></script>
+    <script src="lib/jquery-1.11.2.min.js"></script>
+    <script src="js/Entity.js"></script>
+    <script src="js/Biome.js"></script>
+    <script src="js/Object.js"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
     <span id="char-span">
         <h2>▒▒</h2>
     </span>
     <div id="content">
-        <span id="world-span">
-            <h2 id="world-h2"></h2>
+        <span id="room-span">
+            <h2 id="room-h2"></h2>
         </span>
     </div>
     <script>
@@ -36,16 +39,13 @@
             $("#sidebar").css("height", $(window).width() - $("#world-span").width() + "px");
             $("#footer").css("width", $("#world-span").width() + "px");
             $("#content").css("width", $(window).width() * 0.8 + "px");
-//            alert($("#footer").width() + "   " + $("#world-h2").width());
         });
     </script>
     <div id="sidebar">
-        <h1>something good</h1>
+        <h1>Event log here</h1>
     </div>
     <div id="footer">
-        <h1 id="bottom-text">THE BOTTOM GUI</h1>
+        <h1 id="bottom-text">Other things here</h1>
     </div>
 </body>
-<footer> 
-</footer>
 </html>
