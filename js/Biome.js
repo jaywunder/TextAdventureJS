@@ -154,28 +154,6 @@ function BiomeBuilder (id, pos) {
 }
 
 function WorldTools() {
-  this.makeWorld = function() {
-    var world = [], borderRow = [];
-    // Make normal rows
-    for (var i=0; i < SIZE-1; i++) {
-      var row = [];
-      for (var j=0; j < SIZE-1; j++) {
-        row.push(lightShading);
-      }
-      row[0] = darkShading;
-      row[SIZE-1] = darkShading;
-      world.push(row);
-    }
-    // Make border rows
-    for (var i = 0; i < SIZE; i++) {
-      borderRow.push(darkShading);
-    }
-    //place borders in world
-    world[0] = borderRow;
-    world[world.length-1] = borderRow;
-    return world;
-  }
-  
   this.getSection = function(world, pos) {
     var charWidth = $("#char-span").width();
     var charHeight = $("#char-span").height();
@@ -284,3 +262,4 @@ function WorldTools() {
     }
   }
 }
+//This edit is to test slack integration with github
