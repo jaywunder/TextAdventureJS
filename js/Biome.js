@@ -1,22 +1,53 @@
-var SIZE = 100;
+var WIDTH = 100;
+var HEIGHT = WIDTH / 2;
+var AREA = WIDTH * HEIGHT;
 var Tiles = {
-  underwall: "▀▀",
-  upperWall: "▄▄",
-  leftWall: "▌·",
-  rightWall: "·▐",
-  space: "··",
-  topLeft: "·▄",
-  topRight: "▄·",
-  bottomLeft: "·▀",
-  bottomRight: "▀·",
-  shadingLight: "░░",
-  shadingMed: "▒▒",
-  shadingDark: "▓▓",
-  stones: ["▒▒"],
-  flooring1:"··",
-  flooring2: "××",
-  noTexture: "xx",
+  underwall: {
+    tile: "▀",
+    solid: true,
+  },
+  upperWall: {
+    tile: "▄",
+    solid: true,
+  },
+  leftWall: {
+    tile: "▌",
+    solid: true,
+  },
+  rightWall: {
+    tile: "▐",
+    solid: true,
+  },
+  space: {
+    tile: "·",
+    solid: false,
+  },
+  shadingLight: {
+    tile: "░",
+    solid: false,
+  },
+  shadingMed: {
+    tile: "▒",
+    solid: false,
+  },
+  shadingDark: {
+    tile: "▓",
+    solid: true,
+  },
+  flooring1:{
+    tile: "·",
+    solid: false,
+  },
+  flooring2: {
+    tile: "×",
+    solid: false,
+  },
+  noTexture: {
+    tile: "x",
+    solid: false,
+  },
 }
+
 var BiomeTypes = {
   template: {
     id: "",
@@ -52,17 +83,17 @@ var BiomeTypes = {
             if-else on chrome, and it would be nice to have good performance,
             even if that means sacrificing readability */
           if (x == 0) { // far left side
-            row[x] = tiles.border;
+            row[x] = tiles.border.tile;
           } else if (x < SIZE){ // walkable terrain
             if (x == 0) { //top row
-              row[x] = tiles.border;
+              row[x] = tiles.border.tile;
             } else if () { //middle
-              row[x] = tiles.base;
+              row[x] = tiles.base.tile;
             } else { //bottom row
-              row[x] = tiles.border;
+              row[x] = tiles.border.tile;
             }
           } else if (x == SIZE) { // far right side
-            row[x] = tiles.border;
+            row[x] = tiles.border.tile;
           }
         }
         map.push(row);
@@ -71,14 +102,15 @@ var BiomeTypes = {
       var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
       for (var i = 0; i < _.random(SIZE / 10, SIZE / 2); i++) {
         var stonesPos = [_.random(3, SIZE - 3), _.random(3, SIZE - 3)];
-        map[stonesPos[1]][stonesPos[0]] = tiles.tex;
+        map[stonesPos[1]][stonesPos[0]] = tiles.tex.tile;
         for (var j = 0; j < _.random(3, 9); j++) {
           var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
           try {
-              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex;
+              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex.tile;
             }
           } catch (err) {
-
+            //there was a mysterious unknown error that I don't care about finding.
+            //It might not even exist anymore....
           }
         }
       return map
@@ -92,7 +124,7 @@ var BiomeTypes = {
       tex: Tiles.shadingDark,
       border: Tiles.shadingDark,
     },
-    desc: "Rocky terrain, difficult to walk on",
+    desc: "Rocky terrain, perfect for dwarves.",
     spawnable: [
       "orc",
       //dwarf in future
@@ -108,17 +140,17 @@ var BiomeTypes = {
             if-else on chrome, and it would be nice to have good performance,
             even if that means sacrificing readability */
           if (x == 0) { // far left side
-            row[x] = tiles.border;
+            row[x] = tiles.border.tile;
           } else if (x < SIZE){ // walkable terrain
             if (x == 0) { //top row
-              row[x] = tiles.border;
+              row[x] = tiles.border.tile;
             } else if () { //middle
-              row[x] = tiles.base;
+              row[x] = tiles.base.tile;
             } else { //bottom row
-              row[x] = tiles.border;
+              row[x] = tiles.border.tile;
             }
           } else if (x == SIZE) { // far right side
-            row[x] = tiles.border;
+            row[x] = tiles.border.tile;
           }
         }
         map.push(row);
@@ -127,11 +159,11 @@ var BiomeTypes = {
       var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
       for (var i = 0; i < _.random(SIZE / 10, SIZE / 2); i++) {
         var stonesPos = [_.random(3, SIZE - 3), _.random(3, SIZE - 3)];
-        map[stonesPos[1]][stonesPos[0]] = tiles.tex;
+        map[stonesPos[1]][stonesPos[0]] = tiles.tex.tile;
         for (var j = 0; j < _.random(3, 9); j++) {
           var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
           try {
-              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex;
+              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex.tile;
             }
           } catch (err) {
 

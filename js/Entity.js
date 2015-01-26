@@ -193,7 +193,7 @@ function EntityBuilder(id, pos, gender) {
       _.sample(EntityTypes[id].femaleDescriptions),
       gender
     );
-  }
+  } 
   return entity;
 }
 
