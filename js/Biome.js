@@ -1,54 +1,78 @@
 var WIDTH = 100;
 var HEIGHT = WIDTH / 2;
 var AREA = WIDTH * HEIGHT;
+/********************************************/
 var Tiles = {
-  underwall: {
+  underWall: {
     tile: "▀",
     solid: true,
+    color: "#FFFFFF",
+    
   },
   upperWall: {
     tile: "▄",
     solid: true,
+    color: "#FFFFFF",
+    
   },
   leftWall: {
     tile: "▌",
     solid: true,
+    color: "#FFFFFF",
+    
   },
   rightWall: {
     tile: "▐",
     solid: true,
+    color: "#FFFFFF",
+    
   },
   space: {
     tile: "·",
     solid: false,
+    color: "#FFFFFF",
+    
   },
   shadingLight: {
     tile: "░",
     solid: false,
+    color: "#FFFFFF",
+    
   },
   shadingMed: {
     tile: "▒",
     solid: false,
+    color: "#FFFFFF",
+    
   },
   shadingDark: {
     tile: "▓",
     solid: true,
+    color: "#FFFFFF",
+    
   },
-  flooring1:{
+  flooring1: {
     tile: "·",
     solid: false,
+    color: "#FFFFFF",
+    
   },
   flooring2: {
     tile: "×",
     solid: false,
+    color: "#FFFFFF",
+    
   },
   noTexture: {
     tile: "x",
     solid: false,
+    color: "#FFFFFF",
+    
   },
-}
+};
 
 var BiomeTypes = {
+  /******TEMPLATE******/
   template: {
     id: "",
     tiles: {
@@ -58,14 +82,16 @@ var BiomeTypes = {
     },
     desc: "",
     spawnable: [],
+    genFuncs: {},
     generateBelow: function(tiles) {},
     generateAbove: function(tiles) {},
   },
+  /******PLAINS******/
   plains: {
     id: "plains",
     tiles: {
       base: Tiles.shadingLight,
-      tex: Tiles.shadingMed,
+      texture: Tiles.shadingMed,
       border: Tiles.shadingDark,
     },
     desc: "Beautiful grassy plains. Maybe you'll find a village!",
@@ -73,53 +99,61 @@ var BiomeTypes = {
       "villager",
       "orc",
     ],
-    generateBelow: function(tiles) {
-      var map = [];
-      //MAKE BASE MAP
-      for (var y = 0; i < SIZE; i++) {
-        var row = [];
-        for (var x = 0; j < SIZE; j++) {
-          /*I'm using if-else statments because of performance.
-            Switch statements are aparently thirty times slower than 
-            if-else on chrome, and it would be nice to have good performance,
-            even if that means sacrificing readability */
-          if (x == 0) { // far left side
-            row[x] = tiles.border.tile;
-          } else if (x < SIZE){ // walkable terrain
-            if (x == 0) { //top row
-              row[x] = tiles.border.tile;
-            } else if () { //middle
-              row[x] = tiles.base.tile;
-            } else { //bottom row
-              row[x] = tiles.border.tile;
+    genFuncs: {
+      genMap: function(tiles) {
+        /* Create blank map with borders */
+        var map = [];
+        for (var y = 0; y < HEIGHT; y++) {
+          var row = [];
+          for (var x = 0; x < WIDTH; x++) {
+            if (y == 0) {                       //top row
+              row.push(tiles.border);
+            } else if (y > 0 && y < HEIGHT-1) { //middle stuff
+              if (x == 0) {                     //far left
+                row.push(tiles.border);
+              } else if (x > 0 && x < WIDTH-1) {//middle stuff
+                row.push(tiles.base);
+              } else if (x == WIDTH-1) {        //far right
+                row.push(tiles.border);
+              }
+            } else if (y == HEIGHT-1) {         //bottom row
+              row.push(tiles.border);
             }
-          } else if (x == SIZE) { // far right side
-            row[x] = tiles.border.tile;
           }
+          map.push(row);
         }
-        map.push(row);
-      }
-      //TEXTURE MAP
-      var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
-      for (var i = 0; i < _.random(SIZE / 10, SIZE / 2); i++) {
-        var stonesPos = [_.random(3, SIZE - 3), _.random(3, SIZE - 3)];
-        map[stonesPos[1]][stonesPos[0]] = tiles.tex.tile;
-        for (var j = 0; j < _.random(3, 9); j++) {
-          var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
-          try {
-              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex.tile;
-            }
-          } catch (err) {
-            //there was a mysterious unknown error that I don't care about finding.
-            //It might not even exist anymore....
-          }
-        }
-      return map
+        return map;
+      },
+//      genTexture: function(tiles, map) {
+//        var map = map;
+//        var numbers = [-2, -1, 0, 1, 2];
+//        for (var i = 0; i < _.random(WIDTH / 15, WIDTH / 10); i++) {
+//          var stonesPos = [_.random(3, WIDTH - 3), _.random(3, WIDTH - 3)];
+//          map[stonesPos[1]][stonesPos[0]] = tiles.texture.tile;
+//          for (var j = 0; j < _.random(3, 9); j++) {
+//            var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
+//            try {
+//                map[newStonesPos[1]][newStonesPos[0]] = tiles.texture.tile;
+//              }
+//            } catch (err) {
+//              //there was a mysterious unknown error that I don't care about finding.
+//              //It might not even exist anymore....
+//            }
+//          }
+//        return map
+//      }
+    },
+    generateBelow: function(tiles, genFuncs) {
+      var map = genFuncs.genMap(tiles);
+//      map = genFuncs.genTexture(tiles, map);
+      
+      return map;
     },
     generateAbove: function(tiles) {
-      // do nothing for now
+      return "this is the above map";
     }
   },
+  /******ROCKY******/
   rocky: {
     id: "rocky",
     tiles: {
@@ -132,65 +166,56 @@ var BiomeTypes = {
       "orc",
       //dwarf in future
     ],
+    genFuncs: {
+      genMap: function(tiles) {
+        /* Create blank map with borders */
+        var map = [];
+        for (var y = 0; y < HEIGHT; y++) {
+          var row = [];
+          for (var x = 0; x < WIDTH; x++) {
+            if (y == 0) {                       //top row
+              row.push(tiles.border);
+            } else if (y > 0 && y < HEIGHT-1) { //middle stuff
+              if (x == 0) {                     //far left
+                row.push(tiles.border);
+              } else if (x > 0 && x < WIDTH-1) {//middle stuff
+                row.push(tiles.base);
+              } else if (x == WIDTH-1) {        //far right
+                row.push(tiles.border);
+              }
+            } else if (y == HEIGHT-1) {         //bottom row
+              row.push(tiles.border);
+            }
+          }
+          map.push(row);
+        }
+        return map;
+      },
+    },
     generateBelow: function(tiles) {
-      var map = [];
-      //MAKE BASE MAP
-      for (var y = 0; i < SIZE; i++) {
-        var row = [];
-        for (var x = 0; j < SIZE; j++) {
-          /*I'm using if-else statments because of performance.
-            Switch statements are aparently thirty times slower than 
-            if-else on chrome, and it would be nice to have good performance,
-            even if that means sacrificing readability */
-          if (x == 0) { // far left side
-            row[x] = tiles.border.tile;
-          } else if (x < SIZE){ // walkable terrain
-            if (x == 0) { //top row
-              row[x] = tiles.border.tile;
-            } else if () { //middle
-              row[x] = tiles.base.tile;
-            } else { //bottom row
-              row[x] = tiles.border.tile;
-            }
-          } else if (x == SIZE) { // far right side
-            row[x] = tiles.border.tile;
-          }
-        }
-        map.push(row);
-      }
-      //TEXTURE MAP
-      var numbers = [-1, -1, 0, 0, 0, 0, 1, 1, 1, 2,];
-      for (var i = 0; i < _.random(SIZE / 10, SIZE / 2); i++) {
-        var stonesPos = [_.random(3, SIZE - 3), _.random(3, SIZE - 3)];
-        map[stonesPos[1]][stonesPos[0]] = tiles.tex.tile;
-        for (var j = 0; j < _.random(3, 9); j++) {
-          var newStonesPos = [stonesPos[1] + _.sample(numbers), stonesPos[0] + _.sample(numbers)];
-          try {
-              map[newStonesPos[1]][newStonesPos[0]] = tiles.tex.tile;
-            }
-          } catch (err) {
-
-          }
-        }
-      return map
+      var map = genFuncs.genMap(tiles);
+//      map = genFuncs.genTexture(tiles, map);
+      
+      return map;
     },
     generateAbove: function(tiles) {
-      // do nothing for now
+      return "the map of the above"
     }
   },
 }
 
+/********************************************/
 function BiomeBuilder (id) {
-  alert("id");
   var biome = {
     pos: [0,0],
     entites: {},
     objects: {},
-    above: BiomeTypes[id].generateAbove(BiomeTypes[id].tiles),
-    below: BiomeTypes[id].generateBelow(BiomeTypes[id].tiles),
+    above: BiomeTypes[id].generateAbove(BiomeTypes[id].tiles, BiomeTypes[id].genFuncs),
+    below: BiomeTypes[id].generateBelow(BiomeTypes[id].tiles, BiomeTypes[id].genFuncs),
   };
   return biome;
 }
+
 /*
 function WorldTools() {
   this.getSection = function(world, pos) {
