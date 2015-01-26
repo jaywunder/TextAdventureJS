@@ -2,10 +2,10 @@ var Parts = {
   noTexture: "xx",
   playerHead: "╓╖",
   playerBody: "╙╜",
-}
+};
 
 var AI = {
-  wander: function() {
+  wander: function () {
     var moveChoices = [moveUp, moveDown, moveRight, moveLeft];
     if (_.random(5) == _.random(5)) {
       var direction = _.sample(moveChoices);
@@ -17,7 +17,7 @@ var AI = {
   agro: function() {
     //code for agro AI
   },
-}
+};
 
 var EntityTypes = {
   orc: {

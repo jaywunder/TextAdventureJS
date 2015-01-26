@@ -7,10 +7,11 @@
     <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <script src="lib/underscore-min.js"></script>
     <script src="lib/jquery-1.11.2.min.js"></script>
-    <script src="js/Entity.js"></script>
+<!--    <script src="js/Entity.js"></script>-->
     <script src="js/Biome.js"></script>
     <script src="js/Object.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/test.js"></script>
+<!--    <script src="js/main.js"></script>-->
 </head>
 <body>
     <span id="char-span">
@@ -23,7 +24,18 @@
     </div>
     <script>
         //create the text adventure
-        var textAdventure = new TextAdventure();
+//        var textAdventure = new TextAdventure();
+        function addText(text) { //for debugging
+          var node = document.createTextNode(text)
+          var br = document.createElement("br");
+          var content = document.getElementById("content");
+          content.appendChild(node);
+          content.appendChild(br);
+        }
+        addText("starting");
+        var biome = new BiomeBuilder("plains");
+        addText(biome.below);
+        addText("built");
         
         //ready function
         $(document).ready(function() {

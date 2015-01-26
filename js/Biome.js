@@ -58,7 +58,8 @@ var BiomeTypes = {
     },
     desc: "",
     spawnable: [],
-    generate: function(tiles) {},
+    generateBelow: function(tiles) {},
+    generateAbove: function(tiles) {},
   },
   plains: {
     id: "plains",
@@ -72,7 +73,7 @@ var BiomeTypes = {
       "villager",
       "orc",
     ],
-    generate: function(tiles) {
+    generateBelow: function(tiles) {
       var map = [];
       //MAKE BASE MAP
       for (var y = 0; i < SIZE; i++) {
@@ -114,8 +115,10 @@ var BiomeTypes = {
           }
         }
       return map
-      },
     },
+    generateAbove: function(tiles) {
+      // do nothing for now
+    }
   },
   rocky: {
     id: "rocky",
@@ -129,7 +132,7 @@ var BiomeTypes = {
       "orc",
       //dwarf in future
     ],
-    generate: function(tiles) {
+    generateBelow: function(tiles) {
       var map = [];
       //MAKE BASE MAP
       for (var y = 0; i < SIZE; i++) {
@@ -171,20 +174,24 @@ var BiomeTypes = {
         }
       return map
     },
+    generateAbove: function(tiles) {
+      // do nothing for now
+    }
   },
 }
 
-function BiomeBuilder (id, pos) {
+function BiomeBuilder (id) {
+  alert("id");
   var biome = {
-    pos: pos,
+    pos: [0,0],
     entites: {},
     objects: {},
-    above: [],
-    below: BiomeTypes[id].generate(BiomeTypes[id].tiles),
+    above: BiomeTypes[id].generateAbove(BiomeTypes[id].tiles),
+    below: BiomeTypes[id].generateBelow(BiomeTypes[id].tiles),
   };
   return biome;
 }
-
+/*
 function WorldTools() {
   this.getSection = function(world, pos) {
     var charWidth = $("#char-span").width();
@@ -293,5 +300,5 @@ function WorldTools() {
       h2.appendChild(br);
     }
   }
-}
+}//*/
 //This edit is to test slack integration with github
