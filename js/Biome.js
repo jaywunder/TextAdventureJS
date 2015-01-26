@@ -158,7 +158,7 @@ var BiomeTypes = {
     id: "rocky",
     tiles: {
       base: Tiles.shadingLight,
-      tex: Tiles.shadingDark,
+      texture: Tiles.shadingDark,
       border: Tiles.shadingDark,
     },
     desc: "Rocky terrain, perfect for dwarves.",
